@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-03T17:44:19.058Z",
+  "generatedAt": "2026-05-03T20:16:37.350Z",
   "summary": {
     "totalPostsAnalyzed": 4,
     "negativePostsFound": 2,
@@ -14,10 +14,6 @@
       "mentions": 3
     },
     {
-      "topic": "serviço",
-      "mentions": 2
-    },
-    {
       "topic": "alteração",
       "mentions": 2
     },
@@ -26,27 +22,31 @@
       "mentions": 2
     },
     {
-      "topic": "cancelamento",
+      "topic": "serviço",
+      "mentions": 2
+    },
+    {
+      "topic": "endesa:",
       "mentions": 1
     },
     {
-      "topic": "todos",
+      "topic": "dados",
       "mentions": 1
     },
     {
-      "topic": "escrevo",
+      "topic": "conhecimento",
       "mentions": 1
     },
     {
-      "topic": "ambito",
+      "topic": "todos.",
       "mentions": 1
     },
     {
-      "topic": "opinião",
+      "topic": "gerente",
       "mentions": 1
     },
     {
-      "topic": "possiveis",
+      "topic": "empresa",
       "mentions": 1
     }
   ],

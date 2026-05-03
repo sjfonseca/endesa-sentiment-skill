@@ -199,7 +199,7 @@ async function filterAndAnalyzePosts(redditPosts) {
   const relevantPosts = redditPosts.filter(isRelevantPost);
   console.log(`   Relevant posts: ${relevantPosts.length}/${redditPosts.length} (filtered out ${redditPosts.length - relevantPosts.length} irrelevant)`);
 
-  const negativePosts = [];
+  const allPosts = [];
   const stats = {
     total: relevantPosts.length,
     totalScraped: redditPosts.length,
@@ -217,27 +217,33 @@ async function filterAndAnalyzePosts(redditPosts) {
 
     totalScore += analysis.score;
 
+    let sentimentLabel;
     if (analysis.isNegative) {
       stats.negative++;
-      negativePosts.push({
-        source: 'reddit',
-        author: post.authorName || '[deleted]',
-        title: post.title || '',
-        content: (post.body || '').substring(0, 500),
-        url: post.postUrl || '',
-        timestamp: post.createdAt || '',
-        upvotes: post.upVotes || 0,
-        comments: post.commentsCount || 0,
-        subreddit: post.parsedCommunityName || '',
-        sentimentScore: analysis.score.toFixed(3),
-        hasComplaint: analysis.hasComplaint ? 'Yes' : 'No',
-        collectedAt: new Date().toISOString()
-      });
+      sentimentLabel = 'Negative';
     } else if (analysis.score > 0) {
       stats.positive++;
+      sentimentLabel = 'Positive';
     } else {
       stats.neutral++;
+      sentimentLabel = 'Neutral';
     }
+
+    allPosts.push({
+      source: 'reddit',
+      author: post.authorName || '[deleted]',
+      title: post.title || '',
+      content: (post.body || '').substring(0, 500),
+      url: post.postUrl || '',
+      timestamp: post.createdAt || '',
+      upvotes: post.upVotes || 0,
+      comments: post.commentsCount || 0,
+      subreddit: post.parsedCommunityName || '',
+      sentimentLabel,
+      sentimentScore: analysis.score.toFixed(3),
+      hasComplaint: analysis.hasComplaint ? 'Yes' : 'No',
+      collectedAt: new Date().toISOString()
+    });
   }
 
   stats.avgSentiment = relevantPosts.length > 0
@@ -251,7 +257,8 @@ async function filterAndAnalyzePosts(redditPosts) {
   console.log(`   Neutral: ${stats.neutral}`);
   console.log(`   Average score: ${stats.avgSentiment}`);
 
-  return { posts: negativePosts, stats: stats };
+  const negativePosts = allPosts.filter(p => p.sentimentLabel === 'Negative');
+  return { posts: allPosts, negativePosts, stats };
 }
 
 // ============================================================================
@@ -281,6 +288,7 @@ async function exportToCsv(negativePosts) {
       { id: 'timestamp', title: 'Post Date' },
       { id: 'upvotes', title: 'Upvotes' },
       { id: 'comments', title: 'Comments Count' },
+      { id: 'sentimentLabel', title: 'Sentiment' },
       { id: 'sentimentScore', title: 'Sentiment Score' },
       { id: 'hasComplaint', title: 'Has Complaint' },
       { id: 'collectedAt', title: 'Collected At' }
@@ -293,7 +301,8 @@ async function exportToCsv(negativePosts) {
   return filename;
 }
 
-async function exportToExcel(negativePosts, stats) {
+async function exportToExcel(posts, stats) {
+  const negativePosts = posts;
   ensureOutputDir();
 
   const timestamp = new Date().toISOString().split('T')[0];
@@ -343,8 +352,8 @@ async function exportToExcel(negativePosts, stats) {
     }
   });
 
-  // ── Sheet 2: Negative Posts ───────────────────────────────────────────────
-  const postsSheet = workbook.addWorksheet('Negative Posts');
+  // ── Sheet 2: All Posts ────────────────────────────────────────────────────
+  const postsSheet = workbook.addWorksheet('All Posts');
 
   postsSheet.columns = [
     { header: 'Author', key: 'author', width: 18 },
@@ -355,6 +364,7 @@ async function exportToExcel(negativePosts, stats) {
     { header: 'Post Date', key: 'timestamp', width: 20 },
     { header: 'Upvotes', key: 'upvotes', width: 10 },
     { header: 'Comments', key: 'comments', width: 10 },
+    { header: 'Sentiment', key: 'sentimentLabel', width: 12 },
     { header: 'Sentiment Score', key: 'sentimentScore', width: 16 },
     { header: 'Has Complaint', key: 'hasComplaint', width: 14 },
     { header: 'Collected At', key: 'collectedAt', width: 22 }
@@ -362,25 +372,33 @@ async function exportToExcel(negativePosts, stats) {
 
   const postsHeader = postsSheet.getRow(1);
   postsHeader.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-  postsHeader.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFC0392B' } };
+  postsHeader.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2C3E50' } };
   postsHeader.alignment = { horizontal: 'center', wrapText: true };
   postsSheet.getRow(1).height = 30;
 
-  negativePosts.forEach((post, i) => {
+  // Colour palette per sentiment label
+  const LABEL_FILL = {
+    Negative: { argb: 'FFFFF5F5' },
+    Positive: { argb: 'FFF0FFF0' },
+    Neutral:  { argb: 'FFFFF8E1' }
+  };
+  const LABEL_COLOR = {
+    Negative: { argb: 'FFCC0000' },
+    Positive: { argb: 'FF27AE60' },
+    Neutral:  { argb: 'FF7D6608' }
+  };
+
+  negativePosts.forEach((post) => {
     const row = postsSheet.addRow(post);
-    const fill = i % 2 === 0
-      ? { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFF5F5' } }
-      : { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFFFF' } };
+    const bgArgb = LABEL_FILL[post.sentimentLabel] || { argb: 'FFFFFFFF' };
     row.eachCell(cell => {
-      cell.fill = fill;
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: bgArgb };
       cell.alignment = { wrapText: true, vertical: 'top' };
     });
 
-    // Colour sentiment score red if very negative
-    const scoreCell = row.getCell('sentimentScore');
-    if (parseFloat(post.sentimentScore) < -2) {
-      scoreCell.font = { color: { argb: 'FFCC0000' }, bold: true };
-    }
+    // Colour-code the Sentiment cell
+    const labelCell = row.getCell('sentimentLabel');
+    labelCell.font = { color: LABEL_COLOR[post.sentimentLabel] || {}, bold: true };
 
     // Clickable URL
     const urlCell = row.getCell('url');
@@ -390,7 +408,7 @@ async function exportToExcel(negativePosts, stats) {
     }
   });
 
-  postsSheet.autoFilter = { from: 'A1', to: 'K1' };
+  postsSheet.autoFilter = { from: 'A1', to: 'L1' };
 
   await workbook.xlsx.writeFile(filename);
   console.log(`\n📊 Exported ${negativePosts.length} posts to ${filename}`);
@@ -527,18 +545,18 @@ async function runEndesaSentimentRoutine() {
 
     // Step 5: Analyze sentiment
     console.log('\nStep 5: Analyzing sentiment...');
-    const { posts: negativePosts, stats } = await filterAndAnalyzePosts(redditPosts);
+    const { posts: allPosts, negativePosts, stats } = await filterAndAnalyzePosts(redditPosts);
 
     if (negativePosts.length === 0) {
       console.log('ℹ️  No negative sentiment posts found.');
     }
 
-    // Step 6: Export results
+    // Step 6: Export results (all relevant posts)
     console.log('\nStep 6: Exporting results...');
-    const csvFile = await exportToCsv(negativePosts);
-    const excelFile = await exportToExcel(negativePosts, stats);
+    const csvFile = await exportToCsv(allPosts);
+    const excelFile = await exportToExcel(allPosts, stats);
 
-    // Step 7: Generate report
+    // Step 7: Generate report (negative posts drive topics/engagement)
     console.log('\nStep 7: Generating report...');
     const report = generateReport(negativePosts, stats);
 

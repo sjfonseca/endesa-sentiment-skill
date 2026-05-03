@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-03T20:30:53.189Z",
+  "generatedAt": "2026-05-03T20:32:04.432Z",
   "summary": {
     "totalPostsAnalyzed": 4,
     "negativePostsFound": 3,
@@ -9,10 +9,6 @@
     "averageSentimentScore": "-1.000"
   },
   "topTopics": [
-    {
-      "topic": "prosegur",
-      "mentions": 3
-    },
     {
       "topic": "endesa",
       "mentions": 3
@@ -30,16 +26,8 @@
       "mentions": 3
     },
     {
-      "topic": "serviço",
-      "mentions": 2
-    },
-    {
-      "topic": "minha",
-      "mentions": 2
-    },
-    {
-      "topic": "foram",
-      "mentions": 2
+      "topic": "prosegur",
+      "mentions": 3
     },
     {
       "topic": "normal?",
@@ -48,12 +36,24 @@
     {
       "topic": "meses",
       "mentions": 2
+    },
+    {
+      "topic": "recebi",
+      "mentions": 2
+    },
+    {
+      "topic": "agora",
+      "mentions": 2
+    },
+    {
+      "topic": "fatura",
+      "mentions": 2
     }
   ],
   "mostEngagedNegativePosts": [
     {
       "title": "Cancelamento serviço prosegur",
-      "upvotes": 3,
+      "upvotes": 4,
       "comments": 20,
       "score": "-5.000"
     },

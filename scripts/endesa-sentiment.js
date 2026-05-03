@@ -56,9 +56,10 @@ const sentiment = new Sentiment();
 // Portuguese-specific complaint patterns for enhanced detection
 const COMPLAINT_PATTERNS_PT = [
   /problema|erro|defeito|falha/gi,
-  /queixa|reclamação|denúncia/gi,
+  /queixa|reclamação|reclamar|denúncia/gi,
   /não funciona|inoperante/gi,
   /fatura alta|cobrança indevida|erro na cobrança|fatura errada/gi,
+  /cobrou-me|cobrou.*indevid|fatura.*estimativa|estimativa.*fatura|acerto.*fatura|fatura.*acerto/gi,
   /mau serviço|péssimo serviço|atendimento ruim|péssimo atendimento/gi,
   /abusivo|predador|exploração/gi,
   /fraude|enganado|trapaceiro/gi,

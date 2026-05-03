@@ -1,0 +1,79 @@
+{
+  "generatedAt": "2026-05-03T16:00:40.947Z",
+  "summary": {
+    "totalPostsAnalyzed": 4,
+    "negativePostsFound": 2,
+    "positivePostsFound": 1,
+    "neutralPostsFound": 1,
+    "negativePercentage": "50.0",
+    "averageSentimentScore": "-1.000"
+  },
+  "topTopics": [
+    {
+      "topic": "prosegur",
+      "mentions": 3
+    },
+    {
+      "topic": "alteração",
+      "mentions": 2
+    },
+    {
+      "topic": "e-mail",
+      "mentions": 2
+    },
+    {
+      "topic": "serviço",
+      "mentions": 2
+    },
+    {
+      "topic": "endesa:",
+      "mentions": 1
+    },
+    {
+      "topic": "dados",
+      "mentions": 1
+    },
+    {
+      "topic": "conhecimento",
+      "mentions": 1
+    },
+    {
+      "topic": "todos.",
+      "mentions": 1
+    },
+    {
+      "topic": "gerente",
+      "mentions": 1
+    },
+    {
+      "topic": "empresa",
+      "mentions": 1
+    }
+  ],
+  "mostEngagedNegativePosts": [
+    {
+      "title": "Cancelamento serviço prosegur",
+      "upvotes": 2,
+      "comments": 20,
+      "score": "-5.000"
+    },
+    {
+      "title": "Endesa: alteração de dados sem o meu conhecimento",
+      "upvotes": 1,
+      "comments": 5,
+      "score": "-1.000"
+    }
+  ],
+  "configuration": {
+    "searchTerms": [
+      "Endesa Portugal problemas",
+      "EDP eletricidade queixa",
+      "Endesa fatura indevida",
+      "Endesa mau serviço",
+      "Endesa reclamação"
+    ],
+    "community": "r/portugal",
+    "timeRange": "month",
+    "sentimentThreshold": -0.3
+  }
+}

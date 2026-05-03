@@ -1,0 +1,12 @@
+# Environment variables — never commit API keys
+.env
+
+# Dependencies
+node_modules/
+
+# macOS
+.DS_Store
+
+# Results are committed by the routine itself after each run
+# Remove the next line if you want results excluded from git
+# results/

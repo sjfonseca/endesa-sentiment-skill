@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-05-03T20:16:37.350Z",
+  "generatedAt": "2026-05-03T20:30:53.189Z",
   "summary": {
     "totalPostsAnalyzed": 4,
-    "negativePostsFound": 2,
+    "negativePostsFound": 3,
     "positivePostsFound": 1,
-    "neutralPostsFound": 1,
-    "negativePercentage": "50.0",
+    "neutralPostsFound": 0,
+    "negativePercentage": "75.0",
     "averageSentimentScore": "-1.000"
   },
   "topTopics": [
@@ -14,46 +14,46 @@
       "mentions": 3
     },
     {
-      "topic": "alteração",
-      "mentions": 2
+      "topic": "endesa",
+      "mentions": 3
     },
     {
-      "topic": "e-mail",
-      "mentions": 2
+      "topic": "durante",
+      "mentions": 3
+    },
+    {
+      "topic": "quase",
+      "mentions": 3
+    },
+    {
+      "topic": "tenho",
+      "mentions": 3
     },
     {
       "topic": "serviço",
       "mentions": 2
     },
     {
-      "topic": "endesa:",
-      "mentions": 1
+      "topic": "minha",
+      "mentions": 2
     },
     {
-      "topic": "dados",
-      "mentions": 1
+      "topic": "foram",
+      "mentions": 2
     },
     {
-      "topic": "conhecimento",
-      "mentions": 1
+      "topic": "normal?",
+      "mentions": 2
     },
     {
-      "topic": "todos.",
-      "mentions": 1
-    },
-    {
-      "topic": "gerente",
-      "mentions": 1
-    },
-    {
-      "topic": "empresa",
-      "mentions": 1
+      "topic": "meses",
+      "mentions": 2
     }
   ],
   "mostEngagedNegativePosts": [
     {
       "title": "Cancelamento serviço prosegur",
-      "upvotes": 2,
+      "upvotes": 3,
       "comments": 20,
       "score": "-5.000"
     },
@@ -62,6 +62,12 @@
       "upvotes": 1,
       "comments": 5,
       "score": "-1.000"
+    },
+    {
+      "title": "Endesa cobrou-me 200€ de gás por causa de \"estimativas\" durante quase 1 ano - isto é normal?",
+      "upvotes": 0,
+      "comments": 77,
+      "score": "0.000"
     }
   ],
   "configuration": {

@@ -93,6 +93,19 @@ const apifyClient = axios.create({
   }
 });
 
+const arcticShiftClient = axios.create({
+  baseURL: 'https://arctic-shift.photon-reddit.com/api',
+  headers: {
+    'User-Agent': 'EndeSentimentBot/1.0 (+https://github.com/sjfonseca/endesa-sentiment-skill)',
+    'Accept': 'application/json'
+  },
+  timeout: 30000
+});
+
+const TIME_RANGE_SECONDS = {
+  hour: 3600, day: 86400, week: 604800, month: 2592000, year: 31536000, all: null
+};
+
 async function validateApiKey() {
   if (!CONFIG.apiKey) {
     throw new Error(
@@ -109,77 +122,59 @@ async function validateApiKey() {
   }
 }
 
-async function startRedditScrape() {
-  console.log('\n📡 Starting Reddit scrape via Apify actor...');
+async function collectRedditPosts() {
+  console.log('\n📡 Collecting Reddit posts via Arctic Shift API...');
 
-  const payload = {
-    ...REDDIT_CONFIG
-  };
+  const subreddit = REDDIT_CONFIG.withinCommunity.replace(/^r\//, '');
+  const rangeSeconds = TIME_RANGE_SECONDS[REDDIT_CONFIG.searchTime] || TIME_RANGE_SECONDS.month;
+  const afterTs = rangeSeconds ? Math.floor(Date.now() / 1000) - rangeSeconds : null;
 
-  try {
-    const response = await apifyClient.post(
-      '/acts/3XedXIRBcjfKrnsDJ/runs',
-      payload
-    );
+  // Arctic Shift searches by title keyword; extract the meaningful keyword per term
+  const titleKeywords = [...new Set(
+    REDDIT_CONFIG.searchTerms.flatMap(t => t.split(/\s+/))
+      .filter(w => w.length >= 4 && !/^(com|para|mau|sem|uma|que)$/i.test(w))
+  )];
 
-    const runId = response.data.data.id;
-    console.log(`✅ Actor run started with ID: ${runId}`);
+  const seenIds = new Set();
+  const allPosts = [];
 
-    return runId;
-  } catch (error) {
-    throw new Error(`Failed to start actor: ${error.response?.data?.message || error.message}`);
-  }
-}
+  for (const keyword of titleKeywords) {
+    if (allPosts.length >= CONFIG.maxResults) break;
 
-async function pollActorRun(runId, maxWaitTime = 600000) {
-  // 10 minutes max
-  const startTime = Date.now();
-  let pollCount = 0;
-
-  while (Date.now() - startTime < maxWaitTime) {
-    pollCount++;
+    const params = { title: keyword, subreddit, limit: 100 };
+    if (afterTs) params.after = afterTs;
 
     try {
-      const response = await apifyClient.get(`/actor-runs/${runId}`);
-      const status = response.data.data.status;
-      const stats = response.data.data.stats;
+      const res = await arcticShiftClient.get('/posts/search', { params });
+      const posts = res.data?.data || [];
 
-      console.log(
-        `⏳ Poll #${pollCount} - Status: ${status} | Items: ${stats?.itemsCount || 0}`
-      );
-
-      if (status === 'SUCCEEDED') {
-        console.log('✅ Actor run completed successfully!');
-        return true;
+      let newCount = 0;
+      for (const p of posts) {
+        if (!seenIds.has(p.id)) {
+          seenIds.add(p.id);
+          allPosts.push({
+            authorName: p.author,
+            title: p.title,
+            body: p.selftext || '',
+            postUrl: `https://reddit.com${p.permalink}`,
+            createdAt: new Date(p.created_utc * 1000).toISOString(),
+            upVotes: p.ups,
+            commentsCount: p.num_comments,
+            parsedCommunityName: p.subreddit
+          });
+          newCount++;
+        }
       }
-
-      if (status === 'FAILED') {
-        throw new Error(`Actor failed: ${response.data.data.exitCode}`);
-      }
-
-      // Wait 5 seconds before next poll
-      await new Promise(resolve => setTimeout(resolve, 5000));
-    } catch (error) {
-      throw new Error(`Error polling actor status: ${error.message}`);
+      console.log(`  🔍 "${keyword}": ${newCount} new posts (total: ${allPosts.length})`);
+    } catch (err) {
+      console.warn(`  ⚠️  Fetch error for "${keyword}": ${err.message}`);
     }
+
+    await new Promise(r => setTimeout(r, 500));
   }
 
-  throw new Error('Actor run timeout');
-}
-
-async function getActorResults(runId) {
-  console.log('\n📊 Fetching actor results...');
-
-  try {
-    const response = await apifyClient.get(`/actor-runs/${runId}/dataset/items`);
-
-    const items = response.data;
-    console.log(`✅ Retrieved ${items.length} items from actor`);
-
-    return items;
-  } catch (error) {
-    throw new Error(`Failed to fetch results: ${error.message}`);
-  }
+  console.log(`✅ Collected ${allPosts.length} unique posts`);
+  return allPosts;
 }
 
 // ============================================================================
@@ -526,17 +521,9 @@ async function runEndesaSentimentRoutine() {
     console.log('Step 1: Validating Apify configuration...');
     await validateApiKey();
 
-    // Step 2: Start Reddit scrape
+    // Steps 2-4: Collect Reddit posts directly via Reddit JSON API
     console.log('\nStep 2: Starting Reddit data collection...');
-    const runId = await startRedditScrape();
-
-    // Step 3: Wait for completion
-    console.log('\nStep 3: Waiting for scraping to complete...');
-    await pollActorRun(runId);
-
-    // Step 4: Fetch results
-    console.log('\nStep 4: Retrieving scraped data...');
-    const redditPosts = await getActorResults(runId);
+    const redditPosts = await collectRedditPosts();
 
     if (redditPosts.length === 0) {
       console.warn('⚠️  No posts found. Exiting.');

@@ -1,0 +1,79 @@
+{
+  "generatedAt": "2026-06-01T08:24:49.458Z",
+  "summary": {
+    "totalPostsAnalyzed": 8,
+    "negativePostsFound": 2,
+    "positivePostsFound": 3,
+    "neutralPostsFound": 3,
+    "negativePercentage": "25.0",
+    "averageSentimentScore": "0.500"
+  },
+  "topTopics": [
+    {
+      "topic": "identificar",
+      "mentions": 2
+    },
+    {
+      "topic": "caixa",
+      "mentions": 2
+    },
+    {
+      "topic": "poste",
+      "mentions": 2
+    },
+    {
+      "topic": "sub-reddit",
+      "mentions": 2
+    },
+    {
+      "topic": "minha",
+      "mentions": 2
+    },
+    {
+      "topic": "vossa",
+      "mentions": 1
+    },
+    {
+      "topic": "opinião,",
+      "mentions": 1
+    },
+    {
+      "topic": "consegue",
+      "mentions": 1
+    },
+    {
+      "topic": "resolver",
+      "mentions": 1
+    },
+    {
+      "topic": "problemas",
+      "mentions": 1
+    }
+  ],
+  "mostEngagedNegativePosts": [
+    {
+      "title": "Na vossa opinião, a EDP consegue resolver os problemas mais rápido dos seus clientes por via da e-redes?",
+      "upvotes": 0,
+      "comments": 21,
+      "score": "-2.000"
+    },
+    {
+      "title": "Ajuda para identificar caixa num poste de eletricidade.",
+      "upvotes": 0,
+      "comments": 15,
+      "score": "-2.000"
+    }
+  ],
+  "configuration": {
+    "searchTerms": [
+      "Endesa Portugal problemas",
+      "EDP eletricidade queixa",
+      "Endesa fatura indevida",
+      "Endesa mau serviço",
+      "Endesa reclamação"
+    ],
+    "community": "r/portugal",
+    "timeRange": "month",
+    "sentimentThreshold": -0.3
+  }
+}

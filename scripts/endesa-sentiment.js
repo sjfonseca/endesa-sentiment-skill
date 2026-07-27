@@ -15,17 +15,22 @@ const ExcelJS = require('exceljs');
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-require('dotenv').config();
+require('dotenv').config({ quiet: true });
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 
+function isExplicitlyEnabled(value) {
+  return value === 'true';
+}
+
 const CONFIG = {
   apiKey: process.env.APIFY_API_KEY || '',
   sentimentThreshold: parseFloat(process.env.SENTIMENT_THRESHOLD || '-0.3'),
   maxResults: parseInt(process.env.MAX_RESULTS || '500'),
-  outputDir: process.env.OUTPUT_DIR || './results'
+  outputDir: process.env.OUTPUT_DIR || './results',
+  pushResults: isExplicitlyEnabled(process.env.PUSH_RESULTS)
 };
 
 const APIFY_API_BASE = 'https://api.apify.com/v2';
@@ -55,15 +60,15 @@ const sentiment = new Sentiment();
 
 // Portuguese-specific complaint patterns for enhanced detection
 const COMPLAINT_PATTERNS_PT = [
-  /problema|erro|defeito|falha/gi,
-  /queixa|reclamação|reclamar|denúncia/gi,
-  /não funciona|inoperante/gi,
-  /fatura alta|cobrança indevida|erro na cobrança|fatura errada/gi,
-  /cobrou-me|cobrou.*indevid|fatura.*estimativa|estimativa.*fatura|acerto.*fatura|fatura.*acerto/gi,
-  /mau serviço|péssimo serviço|atendimento ruim|péssimo atendimento/gi,
-  /abusivo|predador|exploração/gi,
-  /fraude|enganado|trapaceiro/gi,
-  /ineficiente|ineficácia/gi
+  /problema|erro|defeito|falha/i,
+  /queixa|reclamação|reclamar|denúncia/i,
+  /não funciona|inoperante/i,
+  /fatura alta|cobrança indevida|erro na cobrança|fatura errada/i,
+  /cobrou-me|cobrou.*indevid|fatura.*estimativa|estimativa.*fatura|acerto.*fatura|fatura.*acerto/i,
+  /mau serviço|péssimo serviço|atendimento ruim|péssimo atendimento/i,
+  /abusivo|predador|exploração/i,
+  /fraude|enganado|trapaceiro/i,
+  /ineficiente|ineficácia/i
 ];
 
 function analyzeSentiment(text) {
@@ -547,9 +552,13 @@ async function runEndesaSentimentRoutine() {
     console.log('\nStep 7: Generating report...');
     const report = generateReport(negativePosts, stats);
 
-    // Step 8: Commit and push results to GitHub
-    console.log('\nStep 8: Pushing results to GitHub...');
-    commitAndPushResults();
+    // Step 8: Push only after the operator explicitly opts in
+    if (CONFIG.pushResults) {
+      console.log('\nStep 8: Pushing results to GitHub...');
+      commitAndPushResults();
+    } else {
+      console.log('\nStep 8: Result push disabled. Set PUSH_RESULTS=true to opt in.');
+    }
 
     // Summary
     const duration = ((Date.now() - startTime) / 1000).toFixed(1);
@@ -579,4 +588,8 @@ if (require.main === module) {
   runEndesaSentimentRoutine();
 }
 
-module.exports = { runEndesaSentimentRoutine };
+module.exports = {
+  analyzeSentiment,
+  isExplicitlyEnabled,
+  runEndesaSentimentRoutine
+};

@@ -1,5 +1,15 @@
 # Apify Actor Configuration Guide for Endesa Sentiment Analysis
 
+## Xquik Actors for X Research
+
+| Need | Actor |
+| --- | --- |
+| Posts and conversations | [X Tweet Scraper](https://apify.com/xquik/x-tweet-scraper) |
+| Audiences and relationships | [X Follower Scraper](https://apify.com/xquik/x-follower-scraper) |
+
+Use [`xquik-actors.md`](xquik-actors.md) for live schemas, bounded inputs,
+dry-run validation, pricing approval, and execution safeguards.
+
 ## Available Reddit Scraping Actors
 
 ### 1. Reddit Post Scraper (`apify/reddit-post-scraper`)
@@ -196,13 +206,19 @@ curl https://api.apify.com/v2/actor-runs/run_xyz789/dataset/items \
 
 ---
 
-## Cost Estimation
+## Pricing and Approval
 
-### Apify Pricing
+Always inspect the selected Actor's live listing immediately before execution.
+Report:
 
-- **Free Plan:** 100 results/month
-- **Standard:** $49/month + overage costs
-- **Typical costs per 1000 posts:** $2-5
+1. the current pricing model and billable events;
+2. the exact bounded input;
+3. expected billable units;
+4. the account spend cap;
+5. the maximum calculated exposure.
+
+Get explicit user approval before every billable run. Never commit prices
+because they can change.
 
 ### Optimization Tips
 
@@ -385,3 +401,8 @@ module.exports = { startRedditScrape };
 - [Actor Store](https://apify.com/store)
 - [API Reference](https://docs.apify.com/api/v2)
 - [Webhook Setup](https://docs.apify.com/webhooks)
+- [X Tweet Scraper](https://apify.com/xquik/x-tweet-scraper)
+- [X Follower Scraper](https://apify.com/xquik/x-follower-scraper)
+
+Xquik is an independent third-party service. Not affiliated with X Corp.
+"Twitter" and "X" are trademarks of X Corp.

@@ -336,3 +336,39 @@ Based on a typical run, you might observe:
 **Example outputs generated:** 2024-01-15  
 **Data shown:** Sample from routine run  
 **Posts anonymized:** Where applicable
+
+---
+
+## Xquik Actor Dry-Run Example
+
+```text
+Xquik Apify Actor plan
+Mode: dry run
+
+Actor: xquik/x-tweet-scraper
+Listing: https://apify.com/xquik/x-tweet-scraper
+{
+  "searchTerms": ["Endesa Portugal"],
+  "maxItems": 20,
+  "maxItemsPerTarget": 10,
+  "outputVariant": "rich",
+  "fieldStyle": "camelCase",
+  "outputPreset": "flat"
+}
+
+Actor: xquik/x-follower-scraper
+Listing: https://apify.com/xquik/x-follower-scraper
+{
+  "twitterHandles": ["endesa"],
+  "relation": "followers",
+  "maxItems": 20,
+  "maxItemsPerTarget": 10,
+  "outputMode": "full",
+  "dedupeMode": "none"
+}
+
+Dry run complete. No Actor run started.
+```
+
+Xquik is an independent third-party service. Not affiliated with X Corp.
+"Twitter" and "X" are trademarks of X Corp.

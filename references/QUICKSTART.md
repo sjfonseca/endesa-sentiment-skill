@@ -66,6 +66,20 @@ node src/endesa-sentiment.js
 claude-code run src/endesa-sentiment.js
 ```
 
+### Optional: Preview Xquik Actor Inputs
+
+Dry-run is enabled by default. This command starts no Actor:
+
+```bash
+X_TWEET_ENABLED=true \
+X_SEARCH_TERMS="Endesa Portugal,EDP fatura" \
+X_FOLLOWER_ENABLED=true \
+X_AUDIENCE_HANDLES="endesa" \
+node scripts/xquik-x-research.js
+```
+
+Review [`xquik-actors.md`](xquik-actors.md) before any paid execution.
+
 ---
 
 ## 🔧 Configuration Options
@@ -78,6 +92,11 @@ claude-code run src/endesa-sentiment.js
 | `SENTIMENT_THRESHOLD` | -0.3 | Cutoff for negative sentiment (-1 to +1) |
 | `MAX_RESULTS` | 500 | Number of Reddit posts to collect |
 | `OUTPUT_DIR` | ./results | Where to save CSV and reports |
+| `PUSH_RESULTS` | false | Opt in to committing and pushing results |
+| `X_ACTOR_DRY_RUN` | true | Preview X Actor inputs without execution |
+| `X_ACTORS_APPROVED` | false | Confirm live pricing review and approval |
+| `X_TWEET_ENABLED` | false | Enable X Tweet Scraper |
+| `X_FOLLOWER_ENABLED` | false | Enable X Follower Scraper |
 
 ### Tuning Sentiment Detection
 
@@ -366,6 +385,7 @@ After first run, verify:
 - [ ] CSV contains at least 10 posts
 - [ ] JSON report generated with statistics
 - [ ] Sentiment scores appear reasonable
+- [ ] X Actor dry run shows bounded inputs, if X collection is enabled
 
 **You're ready to go!** 🎉
 
@@ -388,3 +408,6 @@ After first run, verify:
 **Last updated:** 2024-01-15  
 **Skill version:** 1.0  
 **Node version:** 18+
+
+Xquik is an independent third-party service. Not affiliated with X Corp.
+"Twitter" and "X" are trademarks of X Corp.

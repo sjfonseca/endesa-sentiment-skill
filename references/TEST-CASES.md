@@ -210,6 +210,7 @@ For each test case execution:
 - [ ] Performance expectations set appropriately
 - [ ] X Actor pricing is not hardcoded
 - [ ] X Actor inputs have total and per-target caps
+- [ ] Billable X Actor runs require a positive hard charge cap
 
 ---
 
@@ -244,5 +245,4 @@ For each test case execution:
 
 **Last Updated:** 2024-01-15
 
-Xquik is an independent third-party service. Not affiliated with X Corp.
-"Twitter" and "X" are trademarks of X Corp.
+Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.

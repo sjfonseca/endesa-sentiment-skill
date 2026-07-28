@@ -14,7 +14,7 @@ The project is a **skill package** (not a standalone app). It provides documenta
 # Install dependencies (from assets/package.json)
 npm install axios dotenv sentiment csv-writer
 
-# Run the routine (requires APIFY_API_KEY in .env)
+# Run the routine (requires APIFY_API_KEY in the process environment)
 node scripts/endesa-sentiment.js
 
 # Debug mode
@@ -26,8 +26,10 @@ X_TWEET_ENABLED=true X_SEARCH_TERMS="Endesa Portugal" \
   node scripts/xquik-x-research.js
 ```
 
-`APIFY_API_KEY` is required for billable Actor execution. The Xquik runner is a
-dry run by default. See `assets/.env.example` for all configuration options.
+`APIFY_API_KEY` is required for billable Actor execution. Load it through the
+process environment or the ignored local `.env` file. The Xquik runner is a dry
+run by default. It also requires an approved hard charge cap. See
+`assets/.env.example` for supported variable names.
 
 ## Architecture
 
@@ -37,10 +39,12 @@ The Reddit sentiment pipeline lives in `scripts/endesa-sentiment.js`:
    Arctic Shift → 3. **Analyze** sentiment → 4. **Export** CSV and Excel →
    5. **Generate** JSON → 6. **Optionally push** results.
 
-The X research pipeline lives in `scripts/xquik-x-research.js`:
+X input parsing and validation live in `scripts/xquik-config.js`.
+The X execution pipeline lives in `scripts/xquik-x-research.js`:
 
 1. **Build** bounded inputs → 2. **Preview** them in dry-run mode →
-   3. **Require** pricing approval → 4. **Run** enabled Xquik Actors →
+   3. **Require** pricing approval and a hard charge cap →
+   4. **Run** enabled Xquik Actors →
    5. **Poll** without automatic charge retries → 6. **Export** raw JSON.
 
 Key design decisions:
@@ -53,6 +57,7 @@ Key design decisions:
 
 - `SKILL.md` — 11-part technical guide (the main skill documentation)
 - `scripts/endesa-sentiment.js` — The production routine script
+- `scripts/xquik-config.js`: X Actor configuration, validation, and input plans
 - `scripts/xquik-x-research.js`: Dry-run-first X post and audience runner
 - `tests/endesa-sentiment.test.js`: Sentiment regression tests
 - `tests/xquik-x-research.test.js`: Deterministic Actor input and safety tests

@@ -95,6 +95,7 @@ Review [`xquik-actors.md`](xquik-actors.md) before any paid execution.
 | `PUSH_RESULTS` | false | Opt in to committing and pushing results |
 | `X_ACTOR_DRY_RUN` | true | Preview X Actor inputs without execution |
 | `X_ACTORS_APPROVED` | false | Confirm live pricing review and approval |
+| `X_MAX_TOTAL_CHARGE_USD` | empty | Set the approved hard charge cap |
 | `X_TWEET_ENABLED` | false | Enable X Tweet Scraper |
 | `X_FOLLOWER_ENABLED` | false | Enable X Follower Scraper |
 
@@ -409,5 +410,4 @@ After first run, verify:
 **Skill version:** 1.0  
 **Node version:** 18+
 
-Xquik is an independent third-party service. Not affiliated with X Corp.
-"Twitter" and "X" are trademarks of X Corp.
+Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.

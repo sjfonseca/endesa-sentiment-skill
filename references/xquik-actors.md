@@ -5,10 +5,10 @@ audience data. The runner is `scripts/xquik-x-research.js`.
 
 ## Actor Catalog
 
-| Need | Actor | Apify API ID |
-| --- | --- | --- |
-| Posts and conversations | [X Tweet Scraper](https://apify.com/xquik/x-tweet-scraper) | `xquik~x-tweet-scraper` |
-| Audiences and relationships | [X Follower Scraper](https://apify.com/xquik/x-follower-scraper) | `xquik~x-follower-scraper` |
+| Need | Actor | REST selector | Actor ID |
+| --- | --- | --- | --- |
+| Posts and conversations | [X Tweet Scraper](https://apify.com/xquik/x-tweet-scraper) | `xquik~x-tweet-scraper` | `wAusCMrm284Voaw86` |
+| Audiences and relationships | [X Follower Scraper](https://apify.com/xquik/x-follower-scraper) | `xquik~x-follower-scraper` | `AaT0BcKU5GQh97wdt` |
 
 X Tweet Scraper supports:
 
@@ -33,9 +33,11 @@ The runner uses these safeguards:
 
 - dry-run mode is enabled by default;
 - billable execution requires `X_ACTORS_APPROVED=true`;
+- billable execution requires a positive hard charge cap;
 - the Apify token only appears in an authorization header;
 - every input has whole-run and per-target caps;
 - failed runs are not retried automatically;
+- each Apify HTTP request has a bounded timeout;
 - results preserve diagnostic rows;
 - no result file is committed or pushed automatically.
 
@@ -60,15 +62,11 @@ Inspect these schemas before adding or renaming input fields.
 
 ## Configure Tweet Collection
 
-Enable the Actor and provide at least 1 target type:
+The included runner provides an explicit search workflow:
 
 ```env
 X_TWEET_ENABLED=true
 X_SEARCH_TERMS=Endesa Portugal,EDP fatura
-X_TWEET_URLS=
-X_TWEET_IDS=
-X_POST_HANDLES=
-X_TWEET_LIST_IDS=
 
 X_TWEET_MAX_ITEMS=100
 X_TWEET_MAX_ITEMS_PER_TARGET=25
@@ -77,12 +75,17 @@ X_TWEET_FIELD_STYLE=camelCase
 X_TWEET_OUTPUT_PRESET=flat
 ```
 
-`X_TWEET_MAX_ITEMS` caps the whole run across every search term and target.
-`X_TWEET_MAX_ITEMS_PER_TARGET` limits any single target.
+`X_TWEET_MAX_ITEMS` caps the whole run across every search term.
+`X_TWEET_MAX_ITEMS_PER_TARGET` limits any single term.
 
-Supported tweet output variants are `legacy`, `rich`, and `raw`. Supported
-field styles are `legacy`, `camelCase`, and `snake_case`. Output can be
-`nested` or CSV-friendly `flat`.
+The Actor also supports `legacy`, `tweet`, `tweets`, `profileTweets`,
+`profileReplies`, `profileMedia`, `profileLikes`, `listTweets`, `article`,
+`replies`, `quotes`, `thread`, `retweeters`, and `favoriters`.
+Use the live schema for those routes.
+
+Supported tweet output variants are `legacy`, `rich`, `raw`, `compact`, and
+`full`. Supported field styles are `legacy`, `camelCase`, and `snake_case`.
+Output can be `nested` or CSV-friendly `flat`.
 
 ## Configure Audience Collection
 
@@ -152,6 +155,7 @@ Then execute:
 ```bash
 X_ACTOR_DRY_RUN=false \
 X_ACTORS_APPROVED=true \
+X_MAX_TOTAL_CHARGE_USD="${APPROVED_USD_CAP}" \
 X_TWEET_ENABLED=true \
 X_SEARCH_TERMS="Endesa Portugal,EDP fatura" \
 node scripts/xquik-x-research.js
@@ -169,12 +173,12 @@ Each enabled Actor writes a dated JSON file:
 
 Each file contains:
 
-- Actor ID and listing;
+- Store identifier, stable Actor ID, and listing;
 - approved input;
 - run and dataset IDs;
 - collection timestamp;
 - item and diagnostic counts;
-- raw dataset items.
+- data rows and separate diagnostic rows.
 
 Preserve diagnostic rows for unavailable targets. Never invent missing posts
 or profiles.
@@ -195,5 +199,4 @@ node scripts/xquik-x-research.js
 
 No live Actor run is required for these checks.
 
-Xquik is an independent third-party service. Not affiliated with X Corp.
-"Twitter" and "X" are trademarks of X Corp.
+Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.

@@ -348,6 +348,7 @@ Mode: dry run
 Actor: xquik/x-tweet-scraper
 Listing: https://apify.com/xquik/x-tweet-scraper
 {
+  "mode": "search",
   "searchTerms": ["Endesa Portugal"],
   "maxItems": 20,
   "maxItemsPerTarget": 10,
@@ -370,5 +371,4 @@ Listing: https://apify.com/xquik/x-follower-scraper
 Dry run complete. No Actor run started.
 ```
 
-Xquik is an independent third-party service. Not affiliated with X Corp.
-"Twitter" and "X" are trademarks of X Corp.
+Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.

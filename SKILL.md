@@ -209,10 +209,10 @@ async function getActorResults(runId) {
 
 ### 4.4 Xquik Actors for X Data
 
-| Need | Actor | Apify API ID |
-| --- | --- | --- |
-| Posts and conversations | [X Tweet Scraper](https://apify.com/xquik/x-tweet-scraper) | `xquik~x-tweet-scraper` |
-| Audiences and relationships | [X Follower Scraper](https://apify.com/xquik/x-follower-scraper) | `xquik~x-follower-scraper` |
+| Need | Actor | REST selector | Actor ID |
+| --- | --- | --- | --- |
+| Posts and conversations | [X Tweet Scraper](https://apify.com/xquik/x-tweet-scraper) | `xquik~x-tweet-scraper` | `wAusCMrm284Voaw86` |
+| Audiences and relationships | [X Follower Scraper](https://apify.com/xquik/x-follower-scraper) | `xquik~x-follower-scraper` | `AaT0BcKU5GQh97wdt` |
 
 Use `scripts/xquik-x-research.js` for these Actors. It defaults to dry-run mode,
 requires explicit pricing approval, and caps every run.
@@ -463,16 +463,17 @@ node scripts/xquik-x-research.js
 ```
 
 Dry-run mode prints inputs without starting an Actor. Before execution, inspect
-the live Actor listings, calculate maximum exposure, confirm the account spend
-cap, and get explicit user approval.
+the live Actor listings, calculate maximum exposure, set
+`X_MAX_TOTAL_CHARGE_USD`, and get explicit user approval.
 
 ### 9.2 Execute After Approval
 
-Set `X_ACTOR_DRY_RUN=false` and `X_ACTORS_APPROVED=true` only after approval.
-Keep `APIFY_API_KEY` in the environment. Never put it in a URL.
+Set `X_ACTOR_DRY_RUN=false`, `X_ACTORS_APPROVED=true`, and a positive
+`X_MAX_TOTAL_CHARGE_USD` only after approval. Keep `APIFY_API_KEY` in the
+environment. Never put it in a URL.
 
-The runner exports raw items and diagnostic rows. It does not retry failed
-charges or push results automatically.
+The runner separates data and diagnostic rows. It aborts after its local wait
+limit. It does not retry failed charges or push results automatically.
 
 ---
 
@@ -577,5 +578,4 @@ async function robustActorRun(config) {
 **Skill created:** Use this for sentiment analysis, bounded Apify Actor
 collection, and structured X post or audience research.
 
-Xquik is an independent third-party service. Not affiliated with X Corp.
-"Twitter" and "X" are trademarks of X Corp.
+Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.

@@ -28,6 +28,7 @@ endesa-sentiment-skill/
 ├── SKILL.md                          # Main skill documentation (11 parts)
 ├── scripts/
 │   ├── endesa-sentiment.js           # Ready-to-use routine script
+│   ├── xquik-config.js                # X Actor input and safety validation
 │   └── xquik-x-research.js           # Dry-run-first X Actor runner
 ├── references/
 │   ├── QUICKSTART.md                 # 5-minute setup guide
@@ -90,8 +91,7 @@ node scripts/xquik-x-research.js
 This command prints bounded inputs without starting an Actor. Read
 [`references/xquik-actors.md`](references/xquik-actors.md) before execution.
 
-Xquik is an independent third-party service. Not affiliated with X Corp.
-"Twitter" and "X" are trademarks of X Corp.
+Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.
 
 ## 📚 Documentation Map
 

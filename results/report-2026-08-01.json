@@ -1,0 +1,79 @@
+{
+  "generatedAt": "2026-08-01T08:06:34.330Z",
+  "summary": {
+    "totalPostsAnalyzed": 4,
+    "negativePostsFound": 2,
+    "positivePostsFound": 1,
+    "neutralPostsFound": 1,
+    "negativePercentage": "50.0",
+    "averageSentimentScore": "0.250"
+  },
+  "topTopics": [
+    {
+      "topic": "eletricidade",
+      "mentions": 3
+    },
+    {
+      "topic": "serviços",
+      "mentions": 3
+    },
+    {
+      "topic": "manutenção",
+      "mentions": 3
+    },
+    {
+      "topic": "alguém",
+      "mentions": 2
+    },
+    {
+      "topic": "tenha",
+      "mentions": 2
+    },
+    {
+      "topic": "mudado",
+      "mentions": 2
+    },
+    {
+      "topic": "técnica",
+      "mentions": 2
+    },
+    {
+      "topic": "curso",
+      "mentions": 2
+    },
+    {
+      "topic": "profissional",
+      "mentions": 2
+    },
+    {
+      "topic": "condomínios",
+      "mentions": 2
+    }
+  ],
+  "mostEngagedNegativePosts": [
+    {
+      "title": "Alguém que tenha mudado de carreira para uma área técnica (eletricidade etc)?",
+      "upvotes": 3,
+      "comments": 18,
+      "score": "-1.000"
+    },
+    {
+      "title": "Serviços de Eletricidade e Manutenção para Condomínios em Santa Maria da Feira, Vila Nova de Gaia e arredores",
+      "upvotes": 0,
+      "comments": 2,
+      "score": "0.000"
+    }
+  ],
+  "configuration": {
+    "searchTerms": [
+      "Endesa Portugal problemas",
+      "EDP eletricidade queixa",
+      "Endesa fatura indevida",
+      "Endesa mau serviço",
+      "Endesa reclamação"
+    ],
+    "community": "r/portugal",
+    "timeRange": "month",
+    "sentimentThreshold": -0.3
+  }
+}

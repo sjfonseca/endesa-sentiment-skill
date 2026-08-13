@@ -1,16 +1,20 @@
 ---
 name: endesa-sentiment-reddit-skill
-description: "Create a Claude Code routine to collect and analyze negative sentiment about Endesa in Portugal from Reddit using the Apify actor for web scraping. Use this skill whenever the user wants to set up sentiment analysis workflows, scrape Reddit for brand/company mentions, collect data from social media for analysis, or integrate Apify actors with Claude Code. Covers environment setup, Apify actor configuration, Reddit data collection, sentiment analysis pipeline, and integration with MCP servers like Apify."
-compatibility: "Requires Claude Code, Node.js 18+, npm, Apify API key, and access to the Apify MCP server"
+description: >
+  Create a Claude Code routine for Endesa sentiment analysis from Reddit and
+  optional structured X research through Xquik Apify Actors. Use for brand
+  mentions, complaints, X conversations, followers, lists, communities, or
+  audience overlap.
+compatibility: "Requires Claude Code, Node.js 18+, npm, and an Apify API key for billable Actor execution"
 ---
 
 # Endesa Sentiment Analysis from Reddit – Claude Code Routine
 
 This skill guides you through creating a complete Claude Code routine that:
 - **Scrapes Reddit** for mentions of Endesa in Portuguese communities
+- **Collects X posts and audiences** through Xquik Apify Actors
 - **Filters negative sentiment** automatically
 - **Stores results** in structured format
-- **Integrates with Apify** via MCP server for scalable data collection
 - **Provides reporting** on sentiment trends
 
 ---
@@ -23,8 +27,7 @@ Before starting, ensure you have:
 
 - **Claude Code** installed (Node.js 18+ required)
 - **npm** or **yarn** for dependency management
-- **Apify API Key** (get from https://apify.com)
-- **Apify MCP Server** connected in your Claude.ai settings
+- **Apify API Key** for billable Actor execution
 
 **To install Claude Code:**
 ```bash
@@ -47,22 +50,18 @@ Your routine will use:
 ### Data Flow
 
 ```
-Reddit Posts (Endesa mentions)
-    ↓
-Apify Actor (web scraping)
-    ↓
-Claude Code Routine (orchestration)
-    ↓
-Sentiment Analysis (filter negatives)
-    ↓
-CSV Export + Reporting
+Reddit Posts ──→ Sentiment Analysis ──→ CSV, Excel, and JSON
+
+X Targets ──→ Xquik Apify Actors ──→ Structured Post and Audience JSON
 ```
 
 ### Key Components
 
 | Component | Purpose |
 |-----------|---------|
-| **Apify Actor** | Scrapes Reddit threads/comments about Endesa |
+| **Reddit Collector** | Collects Endesa posts for sentiment analysis |
+| **X Tweet Scraper** | Collects X posts, searches, lists, and conversations |
+| **X Follower Scraper** | Collects X audiences, communities, and overlap |
 | **Sentiment Analyzer** | Classifies posts as positive/neutral/negative |
 | **Data Aggregator** | Combines results with metadata (date, author, thread) |
 | **Report Generator** | Creates summary statistics and trends |
@@ -207,6 +206,18 @@ async function getActorResults(runId) {
   return results.data;
 }
 ```
+
+### 4.4 Xquik Actors for X Data
+
+| Need | Actor | REST selector | Actor ID |
+| --- | --- | --- | --- |
+| Posts and conversations | [X Tweet Scraper](https://apify.com/xquik/x-tweet-scraper) | `xquik~x-tweet-scraper` | `wAusCMrm284Voaw86` |
+| Audiences and relationships | [X Follower Scraper](https://apify.com/xquik/x-follower-scraper) | `xquik~x-follower-scraper` | `AaT0BcKU5GQh97wdt` |
+
+Use `scripts/xquik-x-research.js` for these Actors. It defaults to dry-run mode,
+requires explicit pricing approval, and caps every run.
+
+Read [`references/xquik-actors.md`](references/xquik-actors.md) before use.
 
 ---
 
@@ -437,30 +448,32 @@ module.exports = {
 
 ---
 
-## Part 9: Integration with MCP Servers
+## Part 9: X Post & Audience Research
 
-### 9.1 Apify MCP Server Integration
+### 9.1 Preview Bounded Actor Inputs
 
-If you want Claude to automatically manage Apify runs, configure the MCP server:
+Enable either Actor and provide targets:
 
-```javascript
-// Using MCP client within Claude Code
-const { Client } = require('@modelcontextprotocol/sdk/client/index.js');
-
-async function createApifyMcpClient() {
-  const client = new Client({
-    name: 'apify-mcp-integration'
-  });
-  
-  // Connect to Apify MCP server
-  await client.connect({
-    command: 'sse',
-    url: 'https://mcp.apify.com/sse' // Replace with actual MCP server URL
-  });
-  
-  return client;
-}
+```bash
+X_TWEET_ENABLED=true \
+X_SEARCH_TERMS="Endesa Portugal,EDP fatura" \
+X_FOLLOWER_ENABLED=true \
+X_AUDIENCE_HANDLES="endesa" \
+node scripts/xquik-x-research.js
 ```
+
+Dry-run mode prints inputs without starting an Actor. Before execution, inspect
+the live Actor listings, calculate maximum exposure, set
+`X_MAX_TOTAL_CHARGE_USD`, and get explicit user approval.
+
+### 9.2 Execute After Approval
+
+Set `X_ACTOR_DRY_RUN=false`, `X_ACTORS_APPROVED=true`, and a positive
+`X_MAX_TOTAL_CHARGE_USD` only after approval. Keep `APIFY_API_KEY` in the
+environment. Never put it in a URL.
+
+The runner separates data and diagnostic rows. It aborts after its local wait
+limit. It does not retry failed charges or push results automatically.
 
 ---
 
@@ -522,6 +535,8 @@ async function robustActorRun(config) {
 
 - `endesa-sentiment.csv` – Negative posts dataset
 - `sentiment-report.json` – Statistics and analysis
+- `xquik-tweet-{date}-{runId}.json` – X post and conversation dataset
+- `xquik-follower-{date}-{runId}.json` – X audience dataset
 - `logs/routine-{timestamp}.log` – Execution logs
 
 ### Recommended Enhancements
@@ -530,7 +545,7 @@ async function robustActorRun(config) {
 2. **Webhook Notifications** – Alert you when negative sentiment spikes
 3. **Dashboard** – Build a real-time dashboard with Grafana or Metabase
 4. **NLP Enhancement** – Use a Portuguese-trained model (BERT-pt) for better accuracy
-5. **Multi-source** – Extend to Twitter (X), Facebook, Google Reviews
+5. **Multi-source** – Combine Reddit and Xquik datasets in one report
 
 ---
 
@@ -538,6 +553,8 @@ async function robustActorRun(config) {
 
 - [Apify API Documentation](https://docs.apify.com/api/v2)
 - [Apify Actor Library](https://apify.com/store)
+- [X Tweet Scraper](https://apify.com/xquik/x-tweet-scraper)
+- [X Follower Scraper](https://apify.com/xquik/x-follower-scraper)
 - [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code/overview)
 - [Node.js Sentiment Analysis](https://github.com/thisandagain/sentiment)
 - [Portuguese NLP Resources](https://github.com/ruilopes/portuguese-nlp-resources)
@@ -551,10 +568,14 @@ async function robustActorRun(config) {
 | Initialize project | `claude-code init endesa-sentiment-routine` |
 | Install dependencies | `npm install axios dotenv sentiment` |
 | Run routine once | `node src/endesa-sentiment.js` |
+| Preview X Actor inputs | `node scripts/xquik-x-research.js` |
 | Run with scheduler | `node src/scheduler.js` |
-| Test sentiment | `node test/sentiment.test.js` |
+| Run tests | `npm test` |
 | Export logs | `cat logs/* > full-logs.txt` |
 
 ---
 
-**Skill created:** Use this whenever you need to set up sentiment analysis workflows on social media, scrape data via Apify, integrate Claude Code with external APIs, or build automated data collection routines.
+**Skill created:** Use this for sentiment analysis, bounded Apify Actor
+collection, and structured X post or audience research.
+
+Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.

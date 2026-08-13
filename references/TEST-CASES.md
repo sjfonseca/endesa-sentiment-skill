@@ -32,13 +32,13 @@
 - Specific search query examples for billing complaints
 - Recommended actor selection (reddit-post-scraper vs comments-scraper)
 - Input configuration JSON with relevant parameters
-- Cost estimation
+- Live pricing review and bounded exposure
 - Troubleshooting for no results
 
 **Success Criteria:**
 - Apify API configuration is accurate
 - Query examples return relevant results
-- Cost information is current
+- Pricing comes from the current Actor listing
 - Troubleshooting steps are practical
 
 ---
@@ -154,13 +154,19 @@
 
 ## Integration Test Cases
 
-### Test 7A: With MCP Integration
-Verify the skill references proper MCP server URLs for Apify when available
+### Test 7A: Xquik Tweet and Audience Plans
 
-### Test 7B: With Claude Code Environment
+Verify dry-run inputs for both Xquik Actors. Confirm no Actor run starts.
+
+### Test 7B: Xquik Approval Gate
+
+Verify billable execution fails unless `X_ACTORS_APPROVED=true` and
+`APIFY_API_KEY` is set.
+
+### Test 7C: With Claude Code Environment
 Verify scripts work when run via `claude-code run` command
 
-### Test 7C: Error Recovery
+### Test 7D: Error Recovery
 Verify graceful handling of:
 - API rate limits
 - Network timeouts
@@ -202,6 +208,9 @@ For each test case execution:
 - [ ] Output files are well-formatted
 - [ ] Security considerations mentioned (API keys, data privacy)
 - [ ] Performance expectations set appropriately
+- [ ] X Actor pricing is not hardcoded
+- [ ] X Actor inputs have total and per-target caps
+- [ ] Billable X Actor runs require a positive hard charge cap
 
 ---
 
@@ -235,3 +244,5 @@ For each test case execution:
 ---
 
 **Last Updated:** 2024-01-15
+
+Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.

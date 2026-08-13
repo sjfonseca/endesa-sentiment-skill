@@ -4,7 +4,8 @@
 ![Node](https://img.shields.io/badge/node-18+-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
-Automated routine to collect and analyze negative sentiment about Endesa in Portugal from Reddit using Claude Code and the Apify actor platform.
+Automated routine to analyze Endesa sentiment from Reddit. An optional Xquik
+Actor runner collects structured X post and audience datasets.
 
 ---
 
@@ -13,6 +14,7 @@ Automated routine to collect and analyze negative sentiment about Endesa in Port
 This skill provides everything you need to build a complete sentiment analysis routine in Claude Code that:
 
 - **🔍 Scrapes Reddit** for mentions of Endesa and related complaints
+- **🐦 Collects X data** through 2 Xquik Apify Actors
 - **📊 Analyzes sentiment** automatically using NLP
 - **📈 Filters negative posts** based on configurable thresholds
 - **💾 Exports results** to CSV and JSON for further analysis
@@ -25,12 +27,18 @@ This skill provides everything you need to build a complete sentiment analysis r
 endesa-sentiment-skill/
 ├── SKILL.md                          # Main skill documentation (11 parts)
 ├── scripts/
-│   └── endesa-sentiment.js           # Ready-to-use routine script
+│   ├── endesa-sentiment.js           # Ready-to-use routine script
+│   ├── xquik-config.js                # X Actor input and safety validation
+│   └── xquik-x-research.js           # Dry-run-first X Actor runner
 ├── references/
 │   ├── QUICKSTART.md                 # 5-minute setup guide
 │   ├── apify-config.md               # Apify actor configuration
+│   ├── xquik-actors.md               # X post and audience runbook
 │   ├── TEST-CASES.md                 # Test scenarios
 │   └── EXAMPLE-OUTPUTS.md            # Sample outputs
+├── tests/
+│   ├── endesa-sentiment.test.js      # Sentiment regression tests
+│   └── xquik-x-research.test.js      # Actor input and safety tests
 └── assets/
     ├── .env.example                  # Environment configuration template
     └── package.json                  # npm dependencies
@@ -68,6 +76,23 @@ Check `results/` directory for:
 - `endesa-sentiment-YYYY-MM-DD.csv` – Negative posts data
 - `report-YYYY-MM-DD.json` – Analysis summary
 
+### 4. Preview X Post and Audience Inputs
+
+The Xquik runner uses dry-run mode by default:
+
+```bash
+X_TWEET_ENABLED=true \
+X_SEARCH_TERMS="Endesa Portugal,EDP fatura" \
+X_FOLLOWER_ENABLED=true \
+X_AUDIENCE_HANDLES="endesa" \
+node scripts/xquik-x-research.js
+```
+
+This command prints bounded inputs without starting an Actor. Read
+[`references/xquik-actors.md`](references/xquik-actors.md) before execution.
+
+Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.
+
 ## 📚 Documentation Map
 
 | Document | Purpose | Read Time |
@@ -75,14 +100,16 @@ Check `results/` directory for:
 | **SKILL.md** | Complete technical guide with code | 30 min |
 | **QUICKSTART.md** | 5-minute setup + troubleshooting | 10 min |
 | **apify-config.md** | Apify actor configuration details | 15 min |
+| **xquik-actors.md** | Xquik post and audience Actor runbook | 10 min |
 | **EXAMPLE-OUTPUTS.md** | Sample CSV/JSON outputs | 5 min |
 | **TEST-CASES.md** | Test scenarios and validation | 10 min |
 
 **Recommended reading order:**
 1. Start with **QUICKSTART.md** to get running
 2. Reference **SKILL.md** Part 1-3 for deeper understanding
-3. Use **apify-config.md** to optimize searches
-4. Check **EXAMPLE-OUTPUTS.md** to validate results
+3. Use **apify-config.md** to optimize Reddit searches
+4. Read **xquik-actors.md** before collecting X data
+5. Check **EXAMPLE-OUTPUTS.md** to validate results
 
 ## 🛠️ Architecture
 
@@ -92,8 +119,9 @@ Check `results/` directory for:
 │  (Node.js + JavaScript)                                  │
 │                                                          │
 │  ┌──────────────────────────────────────────────────┐   │
-│  │ 1. Apify Integration                             │   │
-│  │    └─ Start Reddit scraper actor                 │   │
+│  │ 1. Source Collection                             │   │
+│  │    ├─ Reddit posts                               │   │
+│  │    └─ Optional Xquik post and audience Actors    │   │
 │  │                                                   │   │
 │  │ 2. Reddit Scraping                               │   │
 │  │    └─ Collect posts about Endesa/EDP             │   │
@@ -110,7 +138,8 @@ Check `results/` directory for:
 │                                                          │
 └─────────────────────────────────────────────────────────┘
          │
-         ├─→ Reddit (via Apify)
+         ├─→ Reddit posts
+         ├─→ X post and audience JSON (optional)
          ├─→ CSV file (results/)
          ├─→ JSON report (results/)
          └─→ Optional: Slack, Database, etc.
@@ -129,6 +158,8 @@ Check `results/` directory for:
 - **Subreddit filtering** (portugal, legaladvice, etc.)
 - **Time range selection** (week/month/year/all)
 - **Pagination support** for large result sets
+- **X Tweet Scraper** for searches, timelines, lists, and conversations
+- **X Follower Scraper** for audiences, communities, and overlap
 
 ### Output Formats
 - **CSV export** for Excel/Power BI/Sheets
@@ -175,7 +206,8 @@ LOG_LEVEL=info
 
 See **SKILL.md Part 3-4** for complete configuration options including:
 - Custom search terms
-- Different Apify actors
+- Bounded Xquik Actor inputs
+- Live pricing approval
 - Database storage
 - Slack webhooks
 - Scheduled execution
@@ -219,6 +251,8 @@ if (negativePosts.length > 100) {
 
 ### Documentation
 - [Apify API](https://docs.apify.com/api/v2)
+- [X Tweet Scraper](https://apify.com/xquik/x-tweet-scraper)
+- [X Follower Scraper](https://apify.com/xquik/x-follower-scraper)
 - [Reddit API](https://www.reddit.com/dev/api)
 - [Node.js Sentiment](https://github.com/thisandagain/sentiment)
 - [Claude Code Docs](https://docs.anthropic.com/en/docs/claude-code/overview)
@@ -234,7 +268,8 @@ if (negativePosts.length > 100) {
 A: Yes! Change search queries in `REDDIT_CONFIG`. Works for any brand/topic.
 
 **Q: How much does this cost?**  
-A: Apify free tier includes 100 posts/month. $49/month for 1000+.
+A: Check each live Actor listing and your Apify account limits before every run.
+The Xquik runner hardcodes no prices and requires approval before execution.
 
 **Q: Can I run this on a server?**  
 A: Yes. See **SKILL.md Part 8** for Docker/production deployment.
@@ -243,7 +278,8 @@ A: Yes. See **SKILL.md Part 8** for Docker/production deployment.
 A: Daily for trend tracking, weekly for baselines, monthly for comparisons.
 
 **Q: Is Reddit data representative?**  
-A: No. Reddit users skew young/tech-savvy. Supplement with Twitter, Google Reviews, etc.
+A: No. Reddit users skew young and tech-savvy. Use the Xquik Actors for
+structured X post and audience research.
 
 ## 🐛 Troubleshooting
 
@@ -278,6 +314,8 @@ See **SKILL.md Part 10** for comprehensive troubleshooting.
 - ✅ Use environment variables in production
 - ✅ Rotate API keys regularly
 - ✅ Monitor API usage for unusual activity
+- ✅ Keep X Actor dry-run enabled until pricing and inputs are approved
+- ✅ Keep automatic result pushes disabled unless explicitly required
 
 ### Data Privacy
 - Reddit data is public
